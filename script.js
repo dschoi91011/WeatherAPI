@@ -16,3 +16,28 @@ const weatherCodes = {
     thunder: [1087, 1279, 1282],
     thunder_rain: [1273, 1276]
 }
+
+// display hourly forecast
+const displayHourlyForecast = (hourlyData) => {
+    const currentHour = new Date().setMinutes(0, 0, 0);
+    const next24Hours = currentHour + 24 * 60 * 60 * 1000;
+
+    // filter hourly data to only include next 24 hrs
+    const next24HoursData = hourlyData.filter(({time}) => {
+        const forecastTime = new Date(time).getTime();
+        return forecastTime >= currentHour && forecastTime <= next24Hours;
+    });
+
+    // generate HTML for each hourly forecast
+    hourlyWeather.innerHTML = next24HoursData.map((item) => {
+        const temperature = Math.floor(item.temp_c);
+        const time = item.time.split(' ')[1].substring(0, 5);
+        const weatherIcon = Object.keys(weatherCodes).find(icon => weatherCodes[icon].includes(item.condition.code));
+
+        return `<li class="weather-item">
+                <p class="time">${time}</p>
+                <img src="icons/${weatherIcon}.svg" class="weather-icon">
+                <p class="temperature">${temperature} degree</p>
+                </li>`;
+    }).join('');
+};
