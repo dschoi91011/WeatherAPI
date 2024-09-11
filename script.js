@@ -41,3 +41,35 @@ const displayHourlyForecast = (hourlyData) => {
                 </li>`;
     }).join('');
 };
+
+// fetch / display weather details
+const getWeatherDetails = async(API_URL) => {
+    window.innerWidth <= 768 && searchInput.blur();
+    document.body.classList.remove('show-no-results');
+
+    try{
+        // fetch weather data from API and parse res as JSON
+        const response = await fetch(API_URL);
+        const data = await response.json();
+
+        // extract current weather details
+        const temperature = Math.floor(data.current.temp_c);
+        const description = data.current.condition.text;
+        const weatherIcon = Object.keys(weatherCodes).find(icon => weatherCodes[icon].includes(data.current.condition.code));
+
+        // update current weather display
+        currentWeatherDiv.querySelector('.weather-icon').src = `icons/${weatherIcon}.svg`;
+        currentWeatherDiv.querySelector('.temperature').innerHTML = `${temperature}<span> degrees C</span>`;
+        currentWeatherDiv.querySelector('.description').innerText = description;
+
+        // combine hourly data from today and tomorrow
+        const combinedHourlyData = [...data.forecast?.forecastday[0]?.hour, ...data.forecast?.forecastday[1]?.hour];
+        searchInput.value = data.location.name;
+        displayHourlyForecast(combinedHourlyData);
+    } catch(error) {
+        document.body.classList.add('show-no-results');
+    }
+}
+
+// set up weather request for specific city
+
