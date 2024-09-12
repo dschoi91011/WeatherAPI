@@ -72,4 +72,17 @@ const getWeatherDetails = async(API_URL) => {
 }
 
 // set up weather request for specific city
+const setupWeatherRequest = cityname => {
+    const API_URL = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${cityName}&days=2`;
+    getWeatherDetails(API_URL);
+}
 
+// search box
+searchInput.addEventListener('keyup', (e) => {
+    const cityName = searchInput.value.trim();
+    if(e.key == 'Enter' && cityName){
+        setupWeatherRequest(cityName);
+    }
+});
+
+// user coordinates/ fetch weather data for current location
